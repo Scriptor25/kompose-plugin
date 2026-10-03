@@ -1,0 +1,47 @@
+package dev.scriptor.kompose
+
+import com.intellij.execution.configurations.SimpleJavaParameters
+import com.intellij.openapi.externalSystem.ExternalSystemManager
+import com.intellij.openapi.externalSystem.model.ProjectSystemId
+import com.intellij.openapi.externalSystem.service.project.ExternalSystemProjectResolver
+import com.intellij.openapi.fileChooser.FileChooserDescriptor
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Pair
+import com.intellij.util.Function
+
+class KomposeSystemManager :
+    ExternalSystemManager<KomposeProjectSettings, KomposeSettingsListener, KomposeSettings, KomposeLocalSettings, KomposeExecutionSettings> {
+
+    override fun getSystemId(): ProjectSystemId = KomposeSystemId
+
+    override fun getSettingsProvider(): Function<Project, KomposeSettings> =
+        { project ->
+            KomposeSettings(
+                KomposeSettingsListener.TOPIC,
+                project,
+            )
+        }
+
+    override fun getLocalSettingsProvider(): Function<Project, KomposeLocalSettings> =
+        { project ->
+            KomposeLocalSettings(
+                systemId,
+                project,
+                KomposeLocalSettingsState(),
+            )
+        }
+
+    override fun getExecutionSettingsProvider(): Function<Pair<Project, String>, KomposeExecutionSettings> =
+        { KomposeExecutionSettings() }
+
+    override fun getProjectResolverClass(): Class<out ExternalSystemProjectResolver<KomposeExecutionSettings>> =
+        KomposeProjectResolver::class.java
+
+    override fun getExternalProjectDescriptor(): FileChooserDescriptor =
+        FileChooserDescriptorFactory.createSingleFolderDescriptor()
+
+    override fun enhanceRemoteProcessing(parameters: SimpleJavaParameters) {
+        // noop
+    }
+}

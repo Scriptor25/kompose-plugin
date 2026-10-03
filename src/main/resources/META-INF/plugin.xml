@@ -1,0 +1,21 @@
+<idea-plugin>
+    <id>dev.scriptor.kompose-plugin</id>
+
+    <name>Kompose</name>
+
+    <vendor url="https://kompose-plugin.scriptor.dev">Scriptor</vendor>
+
+    <description>
+        <![CDATA[
+            <p>Intellij support plugin for the lightweight Kompose Kotlin build tool.</p>
+        ]]>
+    </description>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <externalSystemManager implementation="dev.scriptor.kompose.KomposeSystemManager"/>
+        <externalSystemUnlinkedProjectAware implementation="dev.scriptor.kompose.KomposeUnlinkedProjectAware"/>
+    </extensions>
+
+</idea-plugin>
