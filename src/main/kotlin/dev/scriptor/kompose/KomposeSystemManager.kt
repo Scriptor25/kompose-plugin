@@ -4,6 +4,7 @@ import com.intellij.execution.configurations.SimpleJavaParameters
 import com.intellij.openapi.externalSystem.ExternalSystemManager
 import com.intellij.openapi.externalSystem.model.ProjectSystemId
 import com.intellij.openapi.externalSystem.service.project.ExternalSystemProjectResolver
+import com.intellij.openapi.externalSystem.task.ExternalSystemTaskManager
 import com.intellij.openapi.fileChooser.FileChooserDescriptor
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.project.Project
@@ -16,12 +17,7 @@ class KomposeSystemManager :
     override fun getSystemId(): ProjectSystemId = KomposeSystemId
 
     override fun getSettingsProvider(): Function<Project, KomposeSettings> =
-        { project ->
-            KomposeSettings(
-                KomposeSettingsListener.TOPIC,
-                project,
-            )
-        }
+        { project -> KomposeSettings(project) }
 
     override fun getLocalSettingsProvider(): Function<Project, KomposeLocalSettings> =
         { project ->
@@ -37,6 +33,9 @@ class KomposeSystemManager :
 
     override fun getProjectResolverClass(): Class<out ExternalSystemProjectResolver<KomposeExecutionSettings>> =
         KomposeProjectResolver::class.java
+
+    override fun getTaskManagerClass(): Class<out ExternalSystemTaskManager<KomposeExecutionSettings>> =
+        KomposeTaskManager::class.java
 
     override fun getExternalProjectDescriptor(): FileChooserDescriptor =
         FileChooserDescriptorFactory.createSingleFolderDescriptor()

@@ -52,7 +52,7 @@ class KomposeProjectResolver : ExternalSystemProjectResolver<KomposeExecutionSet
         val exitCode = process.waitFor()
 
         if (exitCode != 0)
-            throw ExternalSystemException("'kompose model' failed with exit code $exitCode:\n$error")
+            throw ExternalSystemException("'kompose' failed with exit code $exitCode:\n$error")
 
         val json = Json {
             ignoreUnknownKeys = true

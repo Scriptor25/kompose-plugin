@@ -7,10 +7,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.util.messages.Topic
 
 class KomposeSettings(
-    topic: Topic<KomposeSettingsListener>,
     project: Project,
 ) : AbstractExternalSystemSettings<KomposeSettings, KomposeProjectSettings, KomposeSettingsListener>(
-    topic,
+    KomposeSettingsListener.TOPIC,
     project,
 ) {
     override fun subscribe(

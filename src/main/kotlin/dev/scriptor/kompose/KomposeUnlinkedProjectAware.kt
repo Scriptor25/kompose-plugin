@@ -31,7 +31,7 @@ class KomposeUnlinkedProjectAware : ExternalSystemUnlinkedProjectAware {
         return settings.getLinkedProjectSettings(externalProjectPath) != null
     }
 
-    override fun linkAndLoadProject(
+    override suspend fun linkAndLoadProjectAsync(
         project: Project,
         externalProjectPath: String,
     ) {

@@ -16,6 +16,39 @@
     <extensions defaultExtensionNs="com.intellij">
         <externalSystemManager implementation="dev.scriptor.kompose.KomposeSystemManager"/>
         <externalSystemUnlinkedProjectAware implementation="dev.scriptor.kompose.KomposeUnlinkedProjectAware"/>
+        <externalSystemExecutionConsoleManager implementation="dev.scriptor.kompose.KomposeExecutionConsoleManager"/>
+        <configurationType implementation="dev.scriptor.kompose.KomposeTaskConfigurationType"/>
+        <configurationType implementation="dev.scriptor.kompose.KomposeRunConfigurationType"/>
     </extensions>
+
+    <actions>
+        <group id="v6gxpx.Kompose" text="Kompose" popup="true">
+            <action id="v6gxpx.Kompose.Clean"
+                    class="dev.scriptor.kompose.action.KomposeCleanAction"
+                    text="Clean"/>
+            <action id="v6gxpx.Kompose.Compile"
+                    class="dev.scriptor.kompose.action.KomposeCompileAction"
+                    text="Compile"/>
+            <action id="v6gxpx.Kompose.Launch"
+                    class="dev.scriptor.kompose.action.KomposeLaunchAction"
+                    text="Launch"/>
+
+            <group id="v6gxpx.Kompose.Package" text="Package" popup="true">
+                <action id="v6gxpx.Kompose.Package.SlimJar"
+                        class="dev.scriptor.kompose.action.KomposePackageAction"
+                        text="Slim Jar"/>
+                <action id="v6gxpx.Kompose.Package.FatJar"
+                        class="dev.scriptor.kompose.action.KomposePackageFatJarAction"
+                        text="Fat Jar"/>
+            </group>
+
+            <action id="v6pxpx.Kompose.Build"
+                    class="dev.scriptor.kompose.action.KomposeCompileAction"
+                    text="Build"/>
+
+            <add-to-group group-id="BuildMenu"
+                          anchor="last"/>
+        </group>
+    </actions>
 
 </idea-plugin>
