@@ -33,14 +33,20 @@ class KomposeRunConfiguration(
         }
     }
 
+    // TODO: select module to run
+
     override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> {
         return object : SettingsEditor<RunConfiguration>() {
-            override fun resetEditorFrom(s: RunConfiguration) {
-                // noop
+            lateinit var configuration: RunConfiguration
+
+            override fun resetEditorFrom(configuration: RunConfiguration) {
+                this.configuration = configuration
             }
 
-            override fun applyEditorTo(s: RunConfiguration) {
-                // noop
+            override fun applyEditorTo(configuration: RunConfiguration) {
+                configuration.name = this.configuration.name
+                configuration.beforeRunTasks = this.configuration.beforeRunTasks
+                configuration.isAllowRunningInParallel = this.configuration.isAllowRunningInParallel
             }
 
             override fun createEditor(): JComponent {

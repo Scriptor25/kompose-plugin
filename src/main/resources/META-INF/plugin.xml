@@ -16,7 +16,6 @@
     <extensions defaultExtensionNs="com.intellij">
         <externalSystemManager implementation="dev.scriptor.kompose.KomposeSystemManager"/>
         <externalSystemUnlinkedProjectAware implementation="dev.scriptor.kompose.KomposeUnlinkedProjectAware"/>
-        <externalSystemExecutionConsoleManager implementation="dev.scriptor.kompose.KomposeExecutionConsoleManager"/>
         <configurationType implementation="dev.scriptor.kompose.KomposeTaskConfigurationType"/>
         <configurationType implementation="dev.scriptor.kompose.KomposeRunConfigurationType"/>
     </extensions>

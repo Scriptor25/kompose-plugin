@@ -4,7 +4,6 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.externalSystem.settings.AbstractExternalSystemSettings
 import com.intellij.openapi.externalSystem.settings.ExternalSystemSettingsListener
 import com.intellij.openapi.project.Project
-import com.intellij.util.messages.Topic
 
 class KomposeSettings(
     project: Project,

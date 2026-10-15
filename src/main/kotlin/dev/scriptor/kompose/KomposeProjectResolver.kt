@@ -4,6 +4,7 @@ import com.intellij.openapi.externalSystem.importing.ProjectResolverPolicy
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ExternalSystemException
 import com.intellij.openapi.externalSystem.model.project.ProjectData
+import com.intellij.openapi.externalSystem.model.settings.ExternalSystemExecutionSettings
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationEvent
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener
@@ -13,13 +14,13 @@ import kotlinx.serialization.json.Json
 import java.nio.file.Path
 import kotlin.io.path.Path
 
-class KomposeProjectResolver : ExternalSystemProjectResolver<KomposeExecutionSettings> {
+class KomposeProjectResolver : ExternalSystemProjectResolver<ExternalSystemExecutionSettings> {
 
     override fun resolveProjectInfo(
         id: ExternalSystemTaskId,
         projectPath: String,
         isPreviewMode: Boolean,
-        settings: KomposeExecutionSettings?,
+        settings: ExternalSystemExecutionSettings?,
         resolverPolicy: ProjectResolverPolicy?,
         listener: ExternalSystemTaskNotificationListener,
     ): DataNode<ProjectData> {

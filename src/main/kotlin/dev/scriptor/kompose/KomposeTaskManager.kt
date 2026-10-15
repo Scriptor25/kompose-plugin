@@ -1,13 +1,14 @@
 package dev.scriptor.kompose
 
 import com.intellij.execution.process.ProcessOutputType
+import com.intellij.openapi.externalSystem.model.settings.ExternalSystemExecutionSettings
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationEvent
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener
 import com.intellij.openapi.externalSystem.task.ExternalSystemTaskManager
 import kotlin.io.path.Path
 
-class KomposeTaskManager : ExternalSystemTaskManager<KomposeExecutionSettings> {
+class KomposeTaskManager : ExternalSystemTaskManager<ExternalSystemExecutionSettings> {
 
     private fun commandFor(task: KomposeTask): List<String> =
         when (task) {
@@ -30,11 +31,13 @@ class KomposeTaskManager : ExternalSystemTaskManager<KomposeExecutionSettings> {
     private fun executeTask(
         projectPath: String,
         id: ExternalSystemTaskId,
-        settings: KomposeExecutionSettings,
+        settings: ExternalSystemExecutionSettings,
         listener: ExternalSystemTaskNotificationListener,
         taskName: String,
     ) {
         val task = KomposeTask.valueOf(taskName)
+
+        listener.onStart(projectPath, id)
 
         listener.onStatusChange(
             ExternalSystemTaskNotificationEvent(
@@ -73,7 +76,7 @@ class KomposeTaskManager : ExternalSystemTaskManager<KomposeExecutionSettings> {
     override fun executeTasks(
         projectPath: String,
         id: ExternalSystemTaskId,
-        settings: KomposeExecutionSettings,
+        settings: ExternalSystemExecutionSettings,
         listener: ExternalSystemTaskNotificationListener,
     ) {
         for (taskName in settings.tasks) {
