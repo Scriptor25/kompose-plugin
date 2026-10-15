@@ -14,9 +14,11 @@
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
+        <projectService serviceImplementation="dev.scriptor.kompose.KomposeSettings"/>
+
         <externalSystemManager implementation="dev.scriptor.kompose.KomposeSystemManager"/>
         <externalSystemUnlinkedProjectAware implementation="dev.scriptor.kompose.KomposeUnlinkedProjectAware"/>
-        <configurationType implementation="dev.scriptor.kompose.KomposeTaskConfigurationType"/>
+
         <configurationType implementation="dev.scriptor.kompose.KomposeRunConfigurationType"/>
     </extensions>
 

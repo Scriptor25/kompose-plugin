@@ -18,7 +18,7 @@ class KomposeSystemManager :
     override fun getSystemId(): ProjectSystemId = KomposeSystemId
 
     override fun getSettingsProvider(): Function<Project, KomposeSettings> =
-        { project -> KomposeSettings(project) }
+        { project -> KomposeSettings.getInstance(project) }
 
     override fun getLocalSettingsProvider(): Function<Project, KomposeLocalSettings> =
         { project ->

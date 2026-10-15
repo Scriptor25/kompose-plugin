@@ -19,6 +19,11 @@ class KomposeSettings(
     project,
 ), PersistentStateComponent<KomposeSettings.State> {
 
+    companion object {
+        fun getInstance(project: Project): KomposeSettings =
+            project.getService(KomposeSettings::class.java)
+    }
+
     class State : AbstractExternalSystemSettings.State<KomposeProjectSettings> {
 
         var settings: Set<KomposeProjectSettings>? = null
