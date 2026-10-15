@@ -113,7 +113,7 @@ data class KomposeSourceSet(
                 )
             }
 
-        dependencies.compile.maven
+        dependencies.runtime.maven
             .forEach {
                 addDependency(
                     ownerNode,

@@ -1,16 +1,37 @@
 package dev.scriptor.kompose
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.State
+import com.intellij.openapi.components.Storage
 import com.intellij.openapi.externalSystem.settings.AbstractExternalSystemSettings
 import com.intellij.openapi.externalSystem.settings.ExternalSystemSettingsListener
 import com.intellij.openapi.project.Project
 
+@State(
+    name = "KomposeSettings",
+    storages = [Storage("kompose.xml")],
+)
 class KomposeSettings(
     project: Project,
 ) : AbstractExternalSystemSettings<KomposeSettings, KomposeProjectSettings, KomposeSettingsListener>(
     KomposeSettingsListener.TOPIC,
     project,
-) {
+), PersistentStateComponent<KomposeSettings.State> {
+
+    class State : AbstractExternalSystemSettings.State<KomposeProjectSettings> {
+
+        var settings: Set<KomposeProjectSettings>? = null
+
+        override fun getLinkedExternalProjectsSettings(): Set<KomposeProjectSettings>? {
+            return settings
+        }
+
+        override fun setLinkedExternalProjectsSettings(settings: Set<KomposeProjectSettings>) {
+            this.settings = settings
+        }
+    }
+
     override fun subscribe(
         listener: ExternalSystemSettingsListener<KomposeProjectSettings>,
         parentDisposable: Disposable,
@@ -50,5 +71,13 @@ class KomposeSettings(
         current: KomposeProjectSettings,
     ) {
         // noop
+    }
+
+    override fun getState(): State {
+        return State().also(::fillState)
+    }
+
+    override fun loadState(state: State) {
+        super.loadState(state)
     }
 }
