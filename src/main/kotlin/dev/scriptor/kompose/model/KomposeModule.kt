@@ -3,6 +3,7 @@ package dev.scriptor.kompose.model
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.externalSystem.model.ProjectSystemId
+import com.intellij.openapi.externalSystem.model.project.ExternalSystemSourceType
 import com.intellij.openapi.externalSystem.model.project.LibraryData
 import com.intellij.openapi.externalSystem.model.project.ModuleData
 import com.intellij.openapi.externalSystem.model.project.ProjectData
@@ -38,7 +39,18 @@ data class KomposeModule(
                 name,
                 ideDirectory.toString(),
                 directory.toString(),
-            ),
+            ).apply {
+                isInheritProjectCompileOutputPath = false
+
+                sourceSets.values.forEach {
+                    val build = Path(project.path) / it.build
+
+                    when (it.name) {
+                        "main" -> setCompileOutputPath(ExternalSystemSourceType.SOURCE, build.toString())
+                        "test" -> setCompileOutputPath(ExternalSystemSourceType.TEST, build.toString())
+                    }
+                }
+            },
         )
 
         sourceSets.values.forEach {

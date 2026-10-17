@@ -7,7 +7,7 @@
 
     <description>
         <![CDATA[
-            <p>Intellij support plugin for the lightweight Kompose Kotlin build tool.</p>
+            <p>IntelliJ support plugin for Kompose, a lightweight Kotlin build tool.</p>
         ]]>
     </description>
 
@@ -17,6 +17,7 @@
     <extensions defaultExtensionNs="com.intellij">
         <projectImportBuilder implementation="dev.scriptor.kompose.KomposeProjectImportBuilder"/>
         <projectImportProvider implementation="dev.scriptor.kompose.KomposeProjectImportProvider"/>
+        <projectOpenProcessor implementation="dev.scriptor.kompose.KomposeProjectOpenProcessor" order="first"/>
 
         <externalSystemManager implementation="dev.scriptor.kompose.KomposeManager"/>
         <externalSystemUnlinkedProjectAware implementation="dev.scriptor.kompose.KomposeUnlinkedProjectAware"/>

@@ -88,7 +88,7 @@ data class KomposeSourceSet(
                 )
             }
 
-        dependencies.compile.maven
+        dependencies.compile.tree
             .forEach {
                 addDependency(
                     ownerNode,
@@ -113,7 +113,7 @@ data class KomposeSourceSet(
                 )
             }
 
-        dependencies.runtime.maven
+        dependencies.runtime.tree
             .forEach {
                 addDependency(
                     ownerNode,
