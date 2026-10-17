@@ -57,7 +57,7 @@ class KomposeNewProjectWizardStep(parent: NewProjectWizardStep) : AbstractNewPro
         val content = """
             /build/
             /repository/
-        """.trimIndent()
+        """.trimIndent() + "\n"
 
         Files.writeString(root / ".gitignore", content)
     }
@@ -85,7 +85,7 @@ class KomposeNewProjectWizardStep(parent: NewProjectWizardStep) : AbstractNewPro
             
             [repositories]
             maven = ["https://repo1.maven.org/maven2/"]
-        """.trimIndent()
+        """.trimIndent() + "\n"
 
         Files.writeString(root / "project.toml", content)
     }
@@ -100,7 +100,7 @@ class KomposeNewProjectWizardStep(parent: NewProjectWizardStep) : AbstractNewPro
             include = ["main"]
 
             [sources.main]
-        """.trimIndent()
+        """.trimIndent() + "\n"
 
         Files.writeString(root / name / "module.toml", content)
     }
@@ -116,7 +116,7 @@ class KomposeNewProjectWizardStep(parent: NewProjectWizardStep) : AbstractNewPro
             include = ["main"]
 
             [sources.main]
-        """.trimIndent()
+        """.trimIndent() + "\n"
 
         Files.writeString(root / name / "module.toml", content)
     }
