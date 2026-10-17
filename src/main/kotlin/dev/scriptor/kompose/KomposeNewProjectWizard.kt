@@ -10,7 +10,7 @@ class KomposeNewProjectWizard : GeneratorNewProjectWizard {
 
     override val id: String = "kompose"
     override val name: String = "Kompose"
-    override val icon: Icon = AllIcons.Stub
+    override val icon: Icon = AllIcons.Actions.Compile
 
     override fun createStep(context: WizardContext): NewProjectWizardStep {
         return RootNewProjectWizardStep(context)

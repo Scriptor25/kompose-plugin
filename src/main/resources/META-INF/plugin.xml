@@ -12,6 +12,7 @@
     </description>
 
     <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.java</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <projectImportBuilder implementation="dev.scriptor.kompose.KomposeProjectImportBuilder"/>
@@ -45,10 +46,6 @@
                         class="dev.scriptor.kompose.action.KomposePackageFatJarAction"
                         text="Fat Jar"/>
             </group>
-
-            <action id="v6pxpx.Kompose.Build"
-                    class="dev.scriptor.kompose.action.KomposeCompileAction"
-                    text="Build"/>
 
             <add-to-group group-id="BuildMenu"
                           anchor="last"/>

@@ -23,8 +23,7 @@ class KomposeProjectImportBuilder : AbstractExternalProjectImportBuilder<ImportF
 ) {
 
     override fun getName(): String = "Kompose"
-
-    override fun getIcon(): Icon = AllIcons.Stub
+    override fun getIcon(): Icon = AllIcons.Actions.Compile
 
     override fun doPrepare(context: WizardContext) {
         // TODO
