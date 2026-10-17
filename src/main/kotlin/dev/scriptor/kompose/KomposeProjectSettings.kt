@@ -6,8 +6,9 @@ class KomposeProjectSettings : ExternalProjectSettings() {
 
     override fun clone(): KomposeProjectSettings {
         return KomposeProjectSettings().also {
-            it.externalProjectPath = externalProjectPath
             it.isUseQualifiedModuleNames = isUseQualifiedModuleNames
+            it.externalProjectPath = externalProjectPath
+            it.setModules(modules)
         }
     }
 }

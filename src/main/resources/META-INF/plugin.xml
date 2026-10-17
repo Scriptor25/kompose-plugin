@@ -14,12 +14,15 @@
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <projectService serviceImplementation="dev.scriptor.kompose.KomposeSettings"/>
+        <projectImportBuilder implementation="dev.scriptor.kompose.KomposeProjectImportBuilder"/>
+        <projectImportProvider implementation="dev.scriptor.kompose.KomposeProjectImportProvider"/>
 
-        <externalSystemManager implementation="dev.scriptor.kompose.KomposeSystemManager"/>
+        <externalSystemManager implementation="dev.scriptor.kompose.KomposeManager"/>
         <externalSystemUnlinkedProjectAware implementation="dev.scriptor.kompose.KomposeUnlinkedProjectAware"/>
 
         <configurationType implementation="dev.scriptor.kompose.KomposeRunConfigurationType"/>
+
+        <newProjectWizard.generator implementation="dev.scriptor.kompose.KomposeNewProjectWizard"/>
     </extensions>
 
     <actions>

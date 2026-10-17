@@ -2,6 +2,7 @@ package dev.scriptor.kompose
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.externalSystem.settings.AbstractExternalSystemSettings
@@ -12,9 +13,13 @@ import com.intellij.openapi.project.Project
     name = "KomposeSettings",
     storages = [Storage("kompose.xml")],
 )
+@Service(Service.Level.PROJECT)
 class KomposeSettings(
     project: Project,
-) : AbstractExternalSystemSettings<KomposeSettings, KomposeProjectSettings, KomposeSettingsListener>(
+) : AbstractExternalSystemSettings<
+        KomposeSettings,
+        KomposeProjectSettings,
+        KomposeSettingsListener>(
     KomposeSettingsListener.TOPIC,
     project,
 ), PersistentStateComponent<KomposeSettings.State> {

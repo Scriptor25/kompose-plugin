@@ -12,8 +12,12 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pair
 import com.intellij.util.Function
 
-class KomposeSystemManager :
-    ExternalSystemManager<KomposeProjectSettings, KomposeSettingsListener, KomposeSettings, KomposeLocalSettings, ExternalSystemExecutionSettings> {
+class KomposeManager : ExternalSystemManager<
+        KomposeProjectSettings,
+        KomposeSettingsListener,
+        KomposeSettings,
+        KomposeLocalSettings,
+        ExternalSystemExecutionSettings> {
 
     override fun getSystemId(): ProjectSystemId = KomposeSystemId
 
