@@ -43,7 +43,7 @@ data class KomposeModule(
                 isInheritProjectCompileOutputPath = false
 
                 sourceSets.values.forEach {
-                    val build = Path(project.path) / it.build
+                    val build = Path(project.path) / it.build / "classes"
 
                     when (it.name) {
                         "main" -> setCompileOutputPath(ExternalSystemSourceType.SOURCE, build.toString())
