@@ -9,11 +9,11 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationEvent
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener
 import com.intellij.openapi.externalSystem.service.project.ExternalSystemProjectResolver
+import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.platform.eel.provider.asEelPath
 import com.intellij.platform.eel.provider.utils.stderrString
 import com.intellij.platform.eel.provider.utils.stdoutString
 import dev.scriptor.kompose.model.KomposeProject
-import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import java.nio.file.Path
 import kotlin.io.path.Path
@@ -28,9 +28,9 @@ class KomposeProjectResolver : ExternalSystemProjectResolver<ExternalSystemExecu
         resolverPolicy: ProjectResolverPolicy?,
         listener: ExternalSystemTaskNotificationListener,
     ): DataNode<ProjectData> {
-        listener.onStatusChange(ExternalSystemTaskNotificationEvent(id, "Loading Kompose project"))
+        listener.onStatusChange(ExternalSystemTaskNotificationEvent(id, "Loading Kompose Project"))
 
-        val model = runBlocking { load(Path(projectPath)) }
+        val model = runBlockingCancellable { load(Path(projectPath)) }
 
         return model.toNode(id.projectSystemId)
     }

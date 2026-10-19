@@ -10,6 +10,9 @@ dependencies {
 
     intellijPlatform {
         intellijIdea("2026.2.3")
+
         bundledPlugin("com.intellij.java")
+
+        bundledModule("intellij.platform.externalSystem")
     }
 }

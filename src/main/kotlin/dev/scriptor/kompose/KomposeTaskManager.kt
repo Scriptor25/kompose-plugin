@@ -6,8 +6,8 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationEvent
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener
 import com.intellij.openapi.externalSystem.task.ExternalSystemTaskManager
+import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.platform.eel.provider.asEelPath
-import kotlinx.coroutines.runBlocking
 import kotlin.io.path.Path
 
 class KomposeTaskManager : ExternalSystemTaskManager<ExternalSystemExecutionSettings> {
@@ -85,7 +85,7 @@ class KomposeTaskManager : ExternalSystemTaskManager<ExternalSystemExecutionSett
         settings: ExternalSystemExecutionSettings,
         listener: ExternalSystemTaskNotificationListener,
     ) {
-        runBlocking {
+        runBlockingCancellable {
             for (taskName in settings.tasks) {
                 executeTask(
                     projectPath,
