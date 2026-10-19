@@ -63,8 +63,10 @@ data class KomposeSourceSet(
                     it.version = mavenDependency.version
 
                     val path = Path(project.path) / mavenDependency.path
+                    val sources = Path(project.path) / mavenDependency.sources
 
                     it.addPath(LibraryPathType.BINARY, path.toString())
+                    it.addPath(LibraryPathType.SOURCE, sources.toString())
                 }
             )
         }
