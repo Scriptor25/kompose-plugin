@@ -7,7 +7,19 @@ import com.intellij.openapi.externalSystem.model.execution.ExternalSystemTaskExe
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.externalSystem.util.task.TaskExecutionSpec
 import com.intellij.openapi.project.Project
-import java.io.InputStream
+import com.intellij.platform.eel.EelApi
+import com.intellij.platform.eel.EelExecApiHelpers
+import com.intellij.platform.eel.ReadResult
+import com.intellij.platform.eel.channels.EelReceiveChannel
+import com.intellij.platform.eel.provider.getEelDescriptor
+import com.intellij.platform.eel.provider.toEelApi
+import com.intellij.platform.eel.provider.utils.EelProcessExecutionResult
+import com.intellij.platform.eel.spawnProcess
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import java.io.ByteArrayOutputStream
+import java.nio.ByteBuffer
+import java.nio.file.Path
 
 val KomposeSystemId = ProjectSystemId(
     "dev.scriptor.kompose",
@@ -15,11 +27,11 @@ val KomposeSystemId = ProjectSystemId(
 )
 
 enum class KomposeTask {
-    CLEAN,
-    COMPILE,
-    LAUNCH,
-    PACKAGE,
-    PACKAGE_FAT_JAR,
+    Clean,
+    Compile,
+    Launch,
+    Package,
+    PackageFatJar,
 }
 
 fun runKomposeTask(
@@ -47,36 +59,140 @@ fun runKomposeTask(
     )
 }
 
-fun pipe(stream: InputStream, action: (String) -> Unit): Thread {
-    return Thread { stream.bufferedReader().forEachLine(action) }
+private suspend fun readLines(
+    channel: EelReceiveChannel,
+    callback: (String) -> Unit,
+): ByteArray {
+    val buffer = ByteBuffer.allocate(8192)
+    val output = ByteArrayOutputStream()
+    val line = ByteArrayOutputStream()
+
+    while (true) {
+        buffer.clear()
+        val result = channel.receive(buffer)
+        buffer.flip()
+
+        while (buffer.hasRemaining()) {
+            val byte = buffer.get()
+            output.write(byte.toInt())
+
+            if (byte == '\n'.code.toByte()) {
+                val bytes = line.toByteArray()
+                val length = if (
+                    bytes.isNotEmpty() &&
+                    bytes.last() == '\r'.code.toByte()
+                ) {
+                    bytes.size - 1
+                } else {
+                    bytes.size
+                }
+
+                callback(
+                    bytes.decodeToString(
+                        endIndex = length
+                    )
+                )
+                line.reset()
+            } else {
+                line.write(byte.toInt())
+            }
+        }
+
+        if (result == ReadResult.EOF) {
+            if (line.size() > 0) {
+                callback(line.toByteArray().decodeToString())
+            }
+            return output.toByteArray()
+        }
+    }
 }
 
-fun process(
-    command: List<String>,
+suspend fun process(
+    project: Project,
+    exe: String,
+    vararg args: String,
     stdout: (String) -> Unit = {},
     stderr: (String) -> Unit = {},
     success: () -> Unit = {},
     failure: (Exception) -> Unit = {},
-    block: ProcessBuilder.() -> Unit,
-) {
-    val process = ProcessBuilder(command)
+    block: EelExecApiHelpers.SpawnProcess.() -> Unit = {},
+): EelProcessExecutionResult {
+    val eel = project.getEelDescriptor().toEelApi()
+
+    return process(
+        eel,
+        exe,
+        *args,
+        stdout = stdout,
+        stderr = stderr,
+        success = success,
+        failure = failure,
+        block = block,
+    )
+}
+
+suspend fun process(
+    path: Path,
+    exe: String,
+    vararg args: String,
+    stdout: (String) -> Unit = {},
+    stderr: (String) -> Unit = {},
+    success: () -> Unit = {},
+    failure: (Exception) -> Unit = {},
+    block: EelExecApiHelpers.SpawnProcess.() -> Unit = {},
+): EelProcessExecutionResult {
+    val eel = path.getEelDescriptor().toEelApi()
+
+    return process(
+        eel,
+        exe,
+        *args,
+        stdout = stdout,
+        stderr = stderr,
+        success = success,
+        failure = failure,
+        block = block,
+    )
+}
+
+suspend fun process(
+    eel: EelApi,
+    exe: String,
+    vararg args: String,
+    stdout: (String) -> Unit = {},
+    stderr: (String) -> Unit = {},
+    success: () -> Unit = {},
+    failure: (Exception) -> Unit = {},
+    block: EelExecApiHelpers.SpawnProcess.() -> Unit = {},
+): EelProcessExecutionResult {
+    val process = eel.exec
+        .spawnProcess(exe, *args)
         .apply(block)
-        .start()
+        .eelIt()
 
-    val output = pipe(process.inputStream, stdout)
+    val result = coroutineScope {
+        val stdoutReader = async {
+            readLines(process.stdout, stdout)
+        }
+        val stderrReader = async {
+            readLines(process.stderr, stderr)
+        }
 
-    val error = pipe(process.errorStream, stderr)
+        val exitCode = process.exitCode.await()
+        val stdoutBytes = stdoutReader.await()
+        val stderrBytes = stderrReader.await()
 
-    output.start()
-    error.start()
+        EelProcessExecutionResult(
+            exitCode,
+            stdoutBytes,
+            stderrBytes,
+        )
+    }
 
-    val exitCode = process.waitFor()
-
-    output.join()
-    error.join()
-
-    if (exitCode == 0)
+    if (result.exitCode == 0)
         success()
     else
-        failure(ExternalSystemException("'${command.joinToString(" ")}' failed with exit code $exitCode"))
+        failure(ExternalSystemException("$exe [${args.joinToString(", ") { "'$it'" }}] failed with exit code ${result.exitCode}"))
+
+    return result
 }

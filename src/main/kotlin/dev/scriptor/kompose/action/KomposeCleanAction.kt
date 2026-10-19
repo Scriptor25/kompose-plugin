@@ -9,7 +9,7 @@ import dev.scriptor.kompose.runKomposeTask
 class KomposeCleanAction : AnAction() {
 
     override fun actionPerformed(e: AnActionEvent) {
-       runKomposeTask(e.project, KomposeTask.CLEAN)
+       runKomposeTask(e.project, KomposeTask.Clean)
     }
 
     override fun update(e: AnActionEvent) {

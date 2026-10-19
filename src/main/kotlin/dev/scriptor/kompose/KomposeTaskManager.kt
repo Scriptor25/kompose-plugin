@@ -6,29 +6,31 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationEvent
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener
 import com.intellij.openapi.externalSystem.task.ExternalSystemTaskManager
+import com.intellij.platform.eel.provider.asEelPath
+import kotlinx.coroutines.runBlocking
 import kotlin.io.path.Path
 
 class KomposeTaskManager : ExternalSystemTaskManager<ExternalSystemExecutionSettings> {
 
-    private fun commandFor(task: KomposeTask): List<String> =
+    private fun argsFor(task: KomposeTask): Array<String> =
         when (task) {
-            KomposeTask.CLEAN ->
-                listOf("kompose", "clean")
+            KomposeTask.Clean ->
+                arrayOf("clean")
 
-            KomposeTask.COMPILE ->
-                listOf("kompose", "compile")
+            KomposeTask.Compile ->
+                arrayOf("compile")
 
-            KomposeTask.LAUNCH ->
-                listOf("kompose", "launch")
+            KomposeTask.Launch ->
+                arrayOf("launch")
 
-            KomposeTask.PACKAGE ->
-                listOf("kompose", "package")
+            KomposeTask.Package ->
+                arrayOf("package")
 
-            KomposeTask.PACKAGE_FAT_JAR ->
-                listOf("kompose", "package", "--fat")
+            KomposeTask.PackageFatJar ->
+                arrayOf("package", "--fat")
         }
 
-    private fun executeTask(
+    private suspend fun executeTask(
         projectPath: String,
         id: ExternalSystemTaskId,
         settings: ExternalSystemExecutionSettings,
@@ -46,8 +48,12 @@ class KomposeTaskManager : ExternalSystemTaskManager<ExternalSystemExecutionSett
             ),
         )
 
+        val path = Path(projectPath)
+
         process(
-            commandFor(task),
+            path,
+            "kompose",
+            *argsFor(task),
             stdout = {
                 listener.onTaskOutput(
                     id,
@@ -69,7 +75,7 @@ class KomposeTaskManager : ExternalSystemTaskManager<ExternalSystemExecutionSett
                 listener.onFailure(projectPath, id, exception)
             },
         ) {
-            directory(Path(projectPath).toFile())
+            workingDirectory(path.asEelPath())
         }
     }
 
@@ -79,14 +85,16 @@ class KomposeTaskManager : ExternalSystemTaskManager<ExternalSystemExecutionSett
         settings: ExternalSystemExecutionSettings,
         listener: ExternalSystemTaskNotificationListener,
     ) {
-        for (taskName in settings.tasks) {
-            executeTask(
-                projectPath,
-                id,
-                settings,
-                listener,
-                taskName,
-            )
+        runBlocking {
+            for (taskName in settings.tasks) {
+                executeTask(
+                    projectPath,
+                    id,
+                    settings,
+                    listener,
+                    taskName,
+                )
+            }
         }
     }
 

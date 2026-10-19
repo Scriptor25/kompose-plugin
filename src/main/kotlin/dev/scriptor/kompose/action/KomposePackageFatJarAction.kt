@@ -9,7 +9,7 @@ import dev.scriptor.kompose.runKomposeTask
 class KomposePackageFatJarAction : AnAction() {
 
     override fun actionPerformed(e: AnActionEvent) {
-        runKomposeTask(e.project, KomposeTask.PACKAGE_FAT_JAR)
+        runKomposeTask(e.project, KomposeTask.PackageFatJar)
     }
 
     override fun update(e: AnActionEvent) {

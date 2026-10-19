@@ -9,7 +9,7 @@ import dev.scriptor.kompose.runKomposeTask
 class KomposeLaunchAction : AnAction() {
 
     override fun actionPerformed(e: AnActionEvent) {
-        runKomposeTask(e.project, KomposeTask.LAUNCH)
+        runKomposeTask(e.project, KomposeTask.Launch)
     }
 
     override fun update(e: AnActionEvent) {
