@@ -46,6 +46,5 @@ class KomposeManager : ExternalSystemManager<
         FileChooserDescriptorFactory.createSingleFolderDescriptor()
 
     override fun enhanceRemoteProcessing(parameters: SimpleJavaParameters) {
-        // noop
     }
 }
