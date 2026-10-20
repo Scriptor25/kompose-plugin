@@ -21,7 +21,5 @@ sealed interface KomposeModuleData {
         override val include: List<String>,
         @SerialName("include_sources")
         val includeSources: Boolean,
-        @SerialName("package")
-        val packageAs: String,
     ) : KomposeModuleData
 }
