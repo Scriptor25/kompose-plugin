@@ -24,11 +24,11 @@ data class KomposeModule(
 ) {
     fun toNode(
         owner: ProjectSystemId,
-        project: KomposeProject,
+        projectPath: String,
         projectNode: DataNode<ProjectData>,
     ): DataNode<ModuleData> {
-        val ideDirectory = Path(project.path) / ".idea" / "kompose"
-        val directory = Path(project.path) / path
+        val moduleFileDirectoryPath = Path(projectPath) / ".idea" / "kompose"
+        val externalConfigPath = Path(projectPath) / path / "module.toml"
 
         val moduleNode = projectNode.createChild(
             ProjectKeys.MODULE,
@@ -37,13 +37,13 @@ data class KomposeModule(
                 owner,
                 "JAVA_MODULE",
                 name,
-                ideDirectory.toString(),
-                directory.toString(),
+                moduleFileDirectoryPath.toString(),
+                externalConfigPath.toString(),
             ).apply {
                 isInheritProjectCompileOutputPath = false
 
                 sourceSets.values.forEach {
-                    val build = Path(project.path) / it.build / "classes"
+                    val build = Path(projectPath) / it.build / "classes"
 
                     when (it.name) {
                         "main" -> setCompileOutputPath(ExternalSystemSourceType.SOURCE, build.toString())
@@ -56,7 +56,7 @@ data class KomposeModule(
         sourceSets.values.forEach {
             it.toNode(
                 owner,
-                project,
+                projectPath,
                 this,
                 moduleNode,
             )
@@ -67,7 +67,7 @@ data class KomposeModule(
 
     fun addDependencies(
         owner: ProjectSystemId,
-        project: KomposeProject,
+        projectPath: String,
         projectNode: DataNode<ProjectData>,
         moduleNodes: Map<String, DataNode<ModuleData>>,
         libraryNodes: MutableMap<String, DataNode<LibraryData>>
@@ -79,7 +79,7 @@ data class KomposeModule(
             .forEach {
                 it.addDependencies(
                     owner,
-                    project,
+                    projectPath,
                     projectNode,
                     moduleNodes,
                     libraryNodes,

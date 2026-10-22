@@ -18,14 +18,14 @@ data class KomposeProject(
     val repositories: KomposeRepositories,
     val modules: Map<String, KomposeModule>,
 ) {
-    fun toNode(owner: ProjectSystemId): DataNode<ProjectData> {
+    fun toNode(owner: ProjectSystemId, projectPath: String): DataNode<ProjectData> {
         val projectNode = DataNode(
             ProjectKeys.PROJECT,
             ProjectData(
                 owner,
                 name,
-                path,
-                path,
+                projectPath,
+                projectPath,
             ),
             null,
         )
@@ -33,8 +33,8 @@ data class KomposeProject(
         val createRootModule = modules.none { (_, v) -> v.path == "." }
 
         if (createRootModule) {
-            val ideDirectory = Path(path) / ".idea" / "kompose"
-            val directory = Path(path)
+            val moduleFileDirectoryPath = Path(projectPath) / ".idea" / "kompose"
+            val externalConfigPath = Path(projectPath) / "project.toml"
 
             val moduleNode = projectNode.createChild(
                 ProjectKeys.MODULE,
@@ -43,8 +43,8 @@ data class KomposeProject(
                     owner,
                     "JAVA_MODULE",
                     name,
-                    ideDirectory.toString(),
-                    directory.toString(),
+                    moduleFileDirectoryPath.toString(),
+                    externalConfigPath.toString(),
                 )
             )
 
@@ -52,13 +52,13 @@ data class KomposeProject(
                 ProjectKeys.CONTENT_ROOT,
                 ContentRootData(
                     owner,
-                    path,
+                    projectPath,
                 ),
             )
         }
 
         val moduleNodes = modules.values
-            .associate { it.name to it.toNode(owner, this, projectNode) }
+            .associate { it.name to it.toNode(owner, projectPath, projectNode) }
 
         val libraryNodes = mutableMapOf<String, DataNode<LibraryData>>()
 
@@ -66,7 +66,7 @@ data class KomposeProject(
             .forEach {
                 it.addDependencies(
                     owner,
-                    this,
+                    projectPath,
                     projectNode,
                     moduleNodes,
                     libraryNodes,

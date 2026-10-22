@@ -23,6 +23,7 @@ import java.io.InputStream
 import java.nio.ByteBuffer
 import java.nio.channels.Channels
 import java.nio.file.Path
+import kotlin.io.path.Path
 
 val KomposeSystemId = ProjectSystemId(
     "dev.scriptor.kompose",
@@ -250,6 +251,21 @@ private fun readLinesBlocking(
     }
 }
 
+private val wslUncPattern =
+    Regex("""^[/\\]{2}wsl\.localhost[/\\]([^/\\]+)(?:[/\\](.*))?$""", RegexOption.IGNORE_CASE)
+
+fun <T> maybeWslPath(path: String, t: (distribution: String, path: String) -> T, e: (path: String) -> T): T =
+    when (val match = wslUncPattern.matchEntire(path)) {
+        null -> e(path)
+        else -> {
+            val distribution = match.groupValues[1]
+            val path = "/" + match.groupValues[2]
+                .replace('\\', '/')
+
+            t(distribution, path)
+        }
+    }
+
 fun processBlocking(
     exe: String,
     vararg args: String,
@@ -257,10 +273,41 @@ fun processBlocking(
     stderr: (String) -> Unit = {},
     success: () -> Unit = {},
     failure: (Exception) -> Unit = {},
-    block: GeneralCommandLine.() -> Unit = {},
+    workingDirectory: String,
 ): EelProcessExecutionResult {
-    val commandLine = GeneralCommandLine(exe, *args).apply(block)
-    val process = commandLine.createProcess()
+    val commandLine = maybeWslPath(
+        workingDirectory,
+        { distribution, path ->
+            System.err.println(
+                "wsl command line: wsl.exe --distribution '$distribution' --cd '$path' --exec '$exe' ${
+                    args.joinToString(
+                        "' '",
+                        "'",
+                        "'",
+                    )
+                }"
+            )
+
+            GeneralCommandLine(
+                "wsl.exe",
+                "--distribution", distribution,
+                "--cd", path,
+                "--exec", exe,
+                *args,
+            )
+        },
+        { path ->
+            GeneralCommandLine(exe, *args)
+                .withWorkingDirectory(Path(path))
+        },
+    )
+
+    val process = try {
+        commandLine.createProcess()
+    } catch (e: Exception) {
+        e.printStackTrace()
+        throw ExternalSystemException("failed to create process $exe [${args.joinToString(", ") { "'$it'" }}]: ${e.message}")
+    }
 
     val result = run {
         lateinit var stdoutBytes: ByteArray

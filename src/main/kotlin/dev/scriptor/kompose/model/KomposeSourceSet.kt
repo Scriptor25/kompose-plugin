@@ -19,12 +19,12 @@ data class KomposeSourceSet(
 ) {
     fun toNode(
         owner: ProjectSystemId,
-        project: KomposeProject,
+        projectPath: String,
         module: KomposeModule,
         moduleNode: DataNode<ModuleData>,
     ): DataNode<ContentRootData> {
-        val moduleDirectory = Path(project.path) / module.path
-        val directory = Path(project.path) / source
+        val moduleDirectory = Path(projectPath) / module.path
+        val directory = Path(projectPath) / source
         val sourceDirectory = directory / "kotlin"
         val resourceDirectory = directory / "resources"
 
@@ -44,7 +44,7 @@ data class KomposeSourceSet(
 
     fun addLibrary(
         owner: ProjectSystemId,
-        project: KomposeProject,
+        projectPath: String,
         projectNode: DataNode<ProjectData>,
         libraryNodes: MutableMap<String, DataNode<LibraryData>>,
         mavenDependency: KomposeMavenDependency,
@@ -62,8 +62,8 @@ data class KomposeSourceSet(
                     it.artifactId = mavenDependency.artifact
                     it.version = mavenDependency.version
 
-                    val path = Path(project.path) / mavenDependency.path
-                    val sources = Path(project.path) / mavenDependency.sources
+                    val path = Path(projectPath) / mavenDependency.path
+                    val sources = Path(projectPath) / mavenDependency.sources
 
                     it.addPath(LibraryPathType.BINARY, path.toString())
                     it.addPath(LibraryPathType.SOURCE, sources.toString())
@@ -74,7 +74,7 @@ data class KomposeSourceSet(
 
     fun addDependencies(
         owner: ProjectSystemId,
-        project: KomposeProject,
+        projectPath: String,
         projectNode: DataNode<ProjectData>,
         moduleNodes: Map<String, DataNode<ModuleData>>,
         libraryNodes: MutableMap<String, DataNode<LibraryData>>,
@@ -96,7 +96,7 @@ data class KomposeSourceSet(
                     ownerNode,
                     addLibrary(
                         owner,
-                        project,
+                        projectPath,
                         projectNode,
                         libraryNodes,
                         it,
@@ -121,7 +121,7 @@ data class KomposeSourceSet(
                     ownerNode,
                     addLibrary(
                         owner,
-                        project,
+                        projectPath,
                         projectNode,
                         libraryNodes,
                         it,

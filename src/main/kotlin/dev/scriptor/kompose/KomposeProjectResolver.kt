@@ -28,7 +28,7 @@ class KomposeProjectResolver : ExternalSystemProjectResolver<ExternalSystemExecu
 
         val model = load(projectPath)
 
-        return model.toNode(id.projectSystemId)
+        return model.toNode(id.projectSystemId, projectPath)
     }
 
     override fun cancelTask(
@@ -39,9 +39,10 @@ class KomposeProjectResolver : ExternalSystemProjectResolver<ExternalSystemExecu
     }
 
     private fun load(projectPath: String): KomposeProject {
-        val result = processBlocking("kompose", "model", "resolve") {
-            setWorkDirectory(projectPath)
-        }
+        val result = processBlocking(
+            "kompose", "model", "resolve",
+            workingDirectory = projectPath,
+        )
 
         if (result.exitCode != 0)
             throw ExternalSystemException("'kompose' failed with exit code ${result.exitCode}:\n${result.stderrString}")

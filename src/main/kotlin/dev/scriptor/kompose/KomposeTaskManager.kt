@@ -7,7 +7,6 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotifica
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener
 import com.intellij.openapi.externalSystem.task.ExternalSystemTaskManager
 import com.intellij.openapi.progress.runBlockingCancellable
-import kotlin.io.path.Path
 
 class KomposeTaskManager : ExternalSystemTaskManager<ExternalSystemExecutionSettings> {
 
@@ -70,9 +69,8 @@ class KomposeTaskManager : ExternalSystemTaskManager<ExternalSystemExecutionSett
             failure = { exception ->
                 listener.onFailure(projectPath, id, exception)
             },
-        ) {
-            setWorkDirectory(projectPath)
-        }
+            workingDirectory = projectPath,
+        )
     }
 
     override fun executeTasks(
