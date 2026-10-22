@@ -7,6 +7,7 @@ data class KomposeMavenDependency(
     val group: String,
     val artifact: String,
     val version: String,
+    val classifier: String?,
     val path: String,
     val sources: String,
 )
