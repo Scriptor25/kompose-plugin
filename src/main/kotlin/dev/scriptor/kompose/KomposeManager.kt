@@ -11,6 +11,8 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pair
 import com.intellij.util.Function
+import com.intellij.util.PathUtil
+import kotlinx.coroutines.Dispatchers
 
 class KomposeManager : ExternalSystemManager<
         KomposeProjectSettings,
@@ -46,5 +48,6 @@ class KomposeManager : ExternalSystemManager<
         FileChooserDescriptorFactory.createSingleFolderDescriptor()
 
     override fun enhanceRemoteProcessing(parameters: SimpleJavaParameters) {
+        parameters.classPath.add(PathUtil.getJarPathForClass(Dispatchers::class.java))
     }
 }

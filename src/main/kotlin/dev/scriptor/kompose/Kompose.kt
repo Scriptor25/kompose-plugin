@@ -1,5 +1,6 @@
 package dev.scriptor.kompose
 
+import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.openapi.externalSystem.model.ExternalSystemException
 import com.intellij.openapi.externalSystem.model.ProjectSystemId
@@ -18,7 +19,9 @@ import com.intellij.platform.eel.spawnProcess
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import java.io.ByteArrayOutputStream
+import java.io.InputStream
 import java.nio.ByteBuffer
+import java.nio.channels.Channels
 import java.nio.file.Path
 
 val KomposeSystemId = ProjectSystemId(
@@ -181,6 +184,99 @@ suspend fun process(
         val exitCode = process.exitCode.await()
         val stdoutBytes = stdoutReader.await()
         val stderrBytes = stderrReader.await()
+
+        EelProcessExecutionResult(
+            exitCode,
+            stdoutBytes,
+            stderrBytes,
+        )
+    }
+
+    if (result.exitCode == 0)
+        success()
+    else
+        failure(ExternalSystemException("$exe [${args.joinToString(", ") { "'$it'" }}] failed with exit code ${result.exitCode}"))
+
+    return result
+}
+
+private fun readLinesBlocking(
+    stream: InputStream,
+    callback: (String) -> Unit,
+): ByteArray {
+    val channel = Channels.newChannel(stream)
+
+    val buffer = ByteBuffer.allocate(8192)
+    val output = ByteArrayOutputStream()
+    val line = ByteArrayOutputStream()
+
+    while (true) {
+        buffer.clear()
+        val count = channel.read(buffer)
+        buffer.flip()
+
+        while (buffer.hasRemaining()) {
+            val byte = buffer.get()
+            output.write(byte.toInt())
+
+            if (byte == '\n'.code.toByte()) {
+                val bytes = line.toByteArray()
+                val length = if (
+                    bytes.isNotEmpty() &&
+                    bytes.last() == '\r'.code.toByte()
+                ) {
+                    bytes.size - 1
+                } else {
+                    bytes.size
+                }
+
+                callback(
+                    bytes.decodeToString(
+                        endIndex = length
+                    )
+                )
+                line.reset()
+            } else {
+                line.write(byte.toInt())
+            }
+        }
+
+        if (count <= 0) {
+            if (line.size() > 0) {
+                callback(line.toByteArray().decodeToString())
+            }
+            return output.toByteArray()
+        }
+    }
+}
+
+fun processBlocking(
+    exe: String,
+    vararg args: String,
+    stdout: (String) -> Unit = {},
+    stderr: (String) -> Unit = {},
+    success: () -> Unit = {},
+    failure: (Exception) -> Unit = {},
+    block: GeneralCommandLine.() -> Unit = {},
+): EelProcessExecutionResult {
+    val commandLine = GeneralCommandLine(exe, *args).apply(block)
+    val process = commandLine.createProcess()
+
+    val result = run {
+        lateinit var stdoutBytes: ByteArray
+        lateinit var stderrBytes: ByteArray
+
+        val stdoutReader = Thread {
+            stdoutBytes = readLinesBlocking(process.inputStream, stdout)
+        }.apply { start() }
+        val stderrReader = Thread {
+            stderrBytes = readLinesBlocking(process.errorStream, stderr)
+        }.apply { start() }
+
+        val exitCode = process.waitFor()
+
+        stdoutReader.join()
+        stderrReader.join()
 
         EelProcessExecutionResult(
             exitCode,

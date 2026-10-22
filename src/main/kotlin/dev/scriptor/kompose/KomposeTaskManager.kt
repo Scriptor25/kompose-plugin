@@ -7,7 +7,6 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotifica
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener
 import com.intellij.openapi.externalSystem.task.ExternalSystemTaskManager
 import com.intellij.openapi.progress.runBlockingCancellable
-import com.intellij.platform.eel.provider.asEelPath
 import kotlin.io.path.Path
 
 class KomposeTaskManager : ExternalSystemTaskManager<ExternalSystemExecutionSettings> {
@@ -48,10 +47,7 @@ class KomposeTaskManager : ExternalSystemTaskManager<ExternalSystemExecutionSett
             ),
         )
 
-        val path = Path(projectPath)
-
-        process(
-            path,
+        processBlocking(
             "kompose",
             *argsFor(task),
             stdout = {
@@ -75,7 +71,7 @@ class KomposeTaskManager : ExternalSystemTaskManager<ExternalSystemExecutionSett
                 listener.onFailure(projectPath, id, exception)
             },
         ) {
-            workingDirectory(path.asEelPath())
+            setWorkDirectory(projectPath)
         }
     }
 
