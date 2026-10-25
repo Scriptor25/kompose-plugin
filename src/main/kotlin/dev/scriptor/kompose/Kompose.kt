@@ -26,9 +26,17 @@ import java.nio.file.Path
 import kotlin.io.path.Path
 
 val KomposeSystemId = ProjectSystemId(
-    "dev.scriptor.kompose",
+    "kompose",
     "Kompose",
 )
+
+object KomposeDataKey {
+    const val KEY = "KEY"
+    const val TARGET_PLATFORM = "TARGET_PLATFORM"
+    const val LANGUAGE_LEVEL = "LANGUAGE_LEVEL"
+    const val API_LEVEL = "API_LEVEL"
+    const val ADDITIONAL_ARGUMENTS = "ADDITIONAL_ARGUMENTS"
+}
 
 enum class KomposeTask {
     Clean,

@@ -7,6 +7,7 @@ import com.intellij.openapi.externalSystem.model.project.ContentRootData
 import com.intellij.openapi.externalSystem.model.project.LibraryData
 import com.intellij.openapi.externalSystem.model.project.ModuleData
 import com.intellij.openapi.externalSystem.model.project.ProjectData
+import dev.scriptor.kompose.KomposeDataKey
 import kotlinx.serialization.Serializable
 import kotlin.io.path.Path
 import kotlin.io.path.div
@@ -18,7 +19,14 @@ data class KomposeProject(
     val repositories: KomposeRepositories,
     val modules: Map<String, KomposeModule>,
 ) {
-    fun toNode(owner: ProjectSystemId, projectPath: String): DataNode<ProjectData> {
+    companion object {
+        const val KEY = "PROJECT"
+    }
+
+    fun toNode(
+        owner: ProjectSystemId,
+        projectPath: String,
+    ): DataNode<ProjectData> {
         val projectNode = DataNode(
             ProjectKeys.PROJECT,
             ProjectData(
@@ -30,9 +38,7 @@ data class KomposeProject(
             null,
         )
 
-        val createRootModule = modules.none { (_, v) -> v.path == "." }
-
-        if (createRootModule) {
+        val rootModuleNode = if (modules.none { (_, v) -> v.path == "." }) {
             val moduleFileDirectoryPath = Path(projectPath) / ".idea" / "kompose"
             val externalConfigPath = Path(projectPath) / "project.toml"
 
@@ -45,7 +51,9 @@ data class KomposeProject(
                     name,
                     moduleFileDirectoryPath.toString(),
                     externalConfigPath.toString(),
-                )
+                ).apply {
+                    setProperty(KomposeDataKey.KEY, KEY)
+                }
             )
 
             moduleNode.createChild(
@@ -55,10 +63,18 @@ data class KomposeProject(
                     projectPath,
                 ),
             )
-        }
+
+            moduleNode
+        } else null
 
         val moduleNodes = modules.values
-            .associate { it.name to it.toNode(owner, projectPath, projectNode) }
+            .associate {
+                it.name to it.toNode(
+                    owner,
+                    projectPath,
+                    rootModuleNode ?: projectNode,
+                )
+            }
 
         val libraryNodes = mutableMapOf<String, DataNode<LibraryData>>()
 

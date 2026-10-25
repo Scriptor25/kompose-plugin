@@ -14,15 +14,25 @@
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.java</depends>
 
+    <depends>org.jetbrains.kotlin</depends>
+
     <extensions defaultExtensionNs="com.intellij">
         <projectImportBuilder implementation="dev.scriptor.kompose.KomposeProjectImportBuilder"/>
         <projectImportProvider implementation="dev.scriptor.kompose.KomposeProjectImportProvider"/>
+
         <projectOpenProcessor implementation="dev.scriptor.kompose.KomposeProjectOpenProcessor" order="first"/>
 
         <externalSystemManager implementation="dev.scriptor.kompose.KomposeManager"/>
+
         <externalSystemUnlinkedProjectAware implementation="dev.scriptor.kompose.KomposeUnlinkedProjectAware"/>
 
+        <externalProjectDataService implementation="dev.scriptor.kompose.KomposeProjectDataService"/>
+        <externalProjectDataService implementation="dev.scriptor.kompose.KomposeModuleDataService"/>
+
         <configurationType implementation="dev.scriptor.kompose.KomposeRunConfigurationType"/>
+
+        <externalSystem.facetConfigurationImporter
+                implementation="dev.scriptor.kompose.KomposeFacetConfigurationImporter"/>
 
         <newProjectWizard.generator implementation="dev.scriptor.kompose.KomposeNewProjectWizard"/>
     </extensions>

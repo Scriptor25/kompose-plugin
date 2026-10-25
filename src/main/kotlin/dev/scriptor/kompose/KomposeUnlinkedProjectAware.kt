@@ -8,10 +8,6 @@ import com.intellij.openapi.externalSystem.model.ProjectSystemId
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.modifyModules
-import com.intellij.openapi.projectRoots.SimpleJavaSdkType
-import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
-import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.vfs.VirtualFile
 
 class KomposeUnlinkedProjectAware : ExternalSystemUnlinkedProjectAware {
@@ -41,22 +37,6 @@ class KomposeUnlinkedProjectAware : ExternalSystemUnlinkedProjectAware {
     ) {
         val settings = KomposeProjectSettings().apply {
             this.externalProjectPath = externalProjectPath
-        }
-
-        val manager = ProjectRootManager.getInstance(project)
-
-        val projectSdk = manager.projectSdk
-        if (projectSdk == null) {
-            val javaSdk = SdkConfigurationUtil.findOrCreateSdk(null, SimpleJavaSdkType.getInstance())
-            if (javaSdk != null) {
-                manager.projectSdk = javaSdk
-            }
-        }
-
-        // dispose of stale modules
-        project.modifyModules {
-            for (module in modules)
-                disposeModule(module)
         }
 
         ExternalSystemUtil.linkExternalProject(
