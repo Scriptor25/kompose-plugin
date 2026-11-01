@@ -22,6 +22,7 @@ data class KomposeModuleArtifact(
 
 @Serializable
 data class KomposeModule(
+    val id: String,
     val name: String,
     val path: String,
     val source: String,
@@ -45,21 +46,25 @@ data class KomposeModule(
         val moduleFileDirectoryPath = Path(projectPath) / ".idea" / "kompose"
         val externalConfigPath = modulePath / "module.toml"
 
-        val moduleName = when (val data = parentNode.data) {
-            is ModuleData -> "${data.moduleName}.$name"
-            else -> name
+        val idName = when (val data = parentNode.data) {
+            is ModuleData -> "${data.internalName}.$id"
+            else -> id
         }
 
         val moduleNode = parentNode.createChild(
             ProjectKeys.MODULE,
             ModuleData(
-                moduleName,
+                idName,
                 owner,
                 "JAVA_MODULE",
-                moduleName,
+                idName,
                 moduleFileDirectoryPath.toString(),
                 externalConfigPath.toString(),
             ).apply {
+                internalName = idName
+                externalName = name
+                moduleName = name
+
                 setProperty(KomposeDataKey.KEY, KEY)
 
                 group = artifact.group
@@ -98,7 +103,7 @@ data class KomposeModule(
         moduleNodes: Map<String, Map<String, DataNode<ModuleData>>>,
         libraryNodes: MutableMap<String, DataNode<LibraryData>>
     ) {
-        val sourceSetNodes = moduleNodes[name]
+        val sourceSetNodes = moduleNodes[id]
             ?: return
 
         sourceSets.forEach {

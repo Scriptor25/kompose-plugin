@@ -13,7 +13,7 @@ import kotlin.io.path.div
 
 @Serializable
 data class KomposeSourceSet(
-    val name: String,
+    val id: String,
     val source: String,
     val build: String,
     val dependencies: KomposeSourceSetDependencies,
@@ -40,21 +40,25 @@ data class KomposeSourceSet(
         val kotlin = source / "kotlin"
         val resources = source / "resources"
 
-        val moduleName = when (val data = parentNode.data) {
-            is ModuleData -> "${data.moduleName}.$name"
-            else -> name
+        val idName = when (val data = parentNode.data) {
+            is ModuleData -> "${data.internalName}.$id"
+            else -> id
         }
 
         val moduleNode = parentNode.createChild(
             ProjectKeys.MODULE,
             ModuleData(
-                moduleName,
+                idName,
                 owner,
                 "JAVA_MODULE",
-                moduleName,
+                idName,
                 moduleFileDirectoryPath.toString(),
                 externalConfigPath.toString(),
             ).apply {
+                internalName = idName
+                externalName = id
+                moduleName = id
+
                 val extra = buildList {
                     addAll(compiler.common.extra)
                     addAll(compiler.data.extra)
@@ -181,7 +185,7 @@ data class KomposeSourceSet(
         dependencies.compile.modules
             .forEach {
                 val nodes = moduleNodes[it]
-                    ?: throw ExternalSystemException("Kompose module '$name' depends on unknown module '$it'")
+                    ?: throw ExternalSystemException("Kompose module '$id' depends on unknown module '$it'")
 
                 nodes.forEach { (_, node) ->
                     addDependency(
@@ -210,7 +214,7 @@ data class KomposeSourceSet(
         dependencies.runtime.modules
             .forEach {
                 val nodes = moduleNodes[it]
-                    ?: throw ExternalSystemException("Kompose module '$name' depends on unknown module '$it'")
+                    ?: throw ExternalSystemException("Kompose module '$id' depends on unknown module '$it'")
 
                 nodes.forEach { (_, node) ->
                     addDependency(

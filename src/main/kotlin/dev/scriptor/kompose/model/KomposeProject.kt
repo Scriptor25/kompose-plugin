@@ -14,8 +14,9 @@ import kotlin.io.path.div
 
 @Serializable
 data class KomposeProject(
-    val name: String,
+    val id: String,
     val path: String,
+    val name: String,
     val repositories: KomposeRepositories,
     val modules: Map<String, KomposeModule>,
 ) {
@@ -31,10 +32,13 @@ data class KomposeProject(
             ProjectKeys.PROJECT,
             ProjectData(
                 owner,
-                name,
+                id,
                 projectPath,
                 projectPath,
-            ),
+            ).apply {
+                internalName = id
+                externalName = name
+            },
             null,
         )
 
@@ -45,13 +49,17 @@ data class KomposeProject(
             val moduleNode = projectNode.createChild(
                 ProjectKeys.MODULE,
                 ModuleData(
-                    name,
+                    id,
                     owner,
                     "JAVA_MODULE",
-                    name,
+                    id,
                     moduleFileDirectoryPath.toString(),
                     externalConfigPath.toString(),
                 ).apply {
+                    internalName = id
+                    externalName = name
+                    moduleName = name
+
                     setProperty(KomposeDataKey.KEY, KEY)
                 }
             )
@@ -69,7 +77,7 @@ data class KomposeProject(
 
         val moduleNodes = modules.values
             .associate {
-                it.name to it.toNode(
+                it.id to it.toNode(
                     owner,
                     projectPath,
                     rootModuleNode ?: projectNode,
