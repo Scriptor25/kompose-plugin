@@ -253,6 +253,7 @@ data class KomposeSourceSet(
                 targetNode.data,
             ).also {
                 it.scope = scope
+                it.isExported = true
             },
         )
     }
@@ -301,6 +302,7 @@ fun addDependency(
             LibraryLevel.MODULE,
         ).also {
             it.scope = scope
+            it.isExported = true
         }
     )
 }
