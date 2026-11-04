@@ -253,7 +253,6 @@ data class KomposeSourceSet(
                 targetNode.data,
             ).also {
                 it.scope = scope
-                it.isExported = true
             },
         )
     }
@@ -266,7 +265,10 @@ fun addLibrary(
     libraryNodes: MutableMap<String, DataNode<LibraryData>>,
     mavenDependency: KomposeMavenDependency,
 ): DataNode<LibraryData> {
-    val coordinate = "${mavenDependency.group}:${mavenDependency.artifact}:${mavenDependency.version}"
+    val coordinate = when (mavenDependency.classifier) {
+        null -> "${mavenDependency.group}:${mavenDependency.artifact}:${mavenDependency.version}"
+        else -> "${mavenDependency.group}:${mavenDependency.artifact}:${mavenDependency.version}:${mavenDependency.classifier}"
+    }
 
     return libraryNodes.computeIfAbsent(coordinate) { key ->
         projectNode.createChild(
@@ -302,7 +304,6 @@ fun addDependency(
             LibraryLevel.MODULE,
         ).also {
             it.scope = scope
-            it.isExported = true
         }
     )
 }
