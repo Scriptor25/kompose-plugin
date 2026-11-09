@@ -43,7 +43,7 @@ enum class KomposeTask {
     Compile,
     Launch,
     Package,
-    PackageFatJar,
+    PackageFat,
 }
 
 fun runKomposeTask(

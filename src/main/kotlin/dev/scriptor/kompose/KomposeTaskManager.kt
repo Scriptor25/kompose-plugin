@@ -24,7 +24,7 @@ class KomposeTaskManager : ExternalSystemTaskManager<ExternalSystemExecutionSett
             KomposeTask.Package ->
                 arrayOf("package")
 
-            KomposeTask.PackageFatJar ->
+            KomposeTask.PackageFat ->
                 arrayOf("package", "--fat")
         }
 

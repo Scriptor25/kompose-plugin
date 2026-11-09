@@ -54,7 +54,7 @@
                         class="dev.scriptor.kompose.action.KomposePackageAction"
                         text="Slim Jar"/>
                 <action id="v6gxpx.Kompose.Package.FatJar"
-                        class="dev.scriptor.kompose.action.KomposePackageFatJarAction"
+                        class="dev.scriptor.kompose.action.KomposePackageFatAction"
                         text="Fat Jar"/>
             </group>
 

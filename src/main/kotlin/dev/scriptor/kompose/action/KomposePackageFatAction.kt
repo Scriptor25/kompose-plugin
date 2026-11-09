@@ -6,10 +6,10 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import dev.scriptor.kompose.KomposeTask
 import dev.scriptor.kompose.runKomposeTask
 
-class KomposePackageFatJarAction : AnAction() {
+class KomposePackageFatAction : AnAction() {
 
     override fun actionPerformed(e: AnActionEvent) {
-        runKomposeTask(e.project, KomposeTask.PackageFatJar)
+        runKomposeTask(e.project, KomposeTask.PackageFat)
     }
 
     override fun update(e: AnActionEvent) {
