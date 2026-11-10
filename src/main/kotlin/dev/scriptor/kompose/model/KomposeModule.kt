@@ -106,15 +106,16 @@ data class KomposeModule(
         val sourceSetNodes = moduleNodes[id]
             ?: return
 
-        sourceSets.forEach {
-            val moduleNode = sourceSetNodes[it.key]
-                ?: error("invalid source set '${it.key}'")
+        sourceSets.forEach { (key, value) ->
+            val moduleNode = sourceSetNodes[key]
+                ?: error("invalid source set '$key'")
 
-            it.value.addDependencies(
+            value.addDependencies(
                 owner,
                 projectPath,
                 projectNode,
                 moduleNodes,
+                sourceSetNodes,
                 libraryNodes,
                 moduleNode,
             )

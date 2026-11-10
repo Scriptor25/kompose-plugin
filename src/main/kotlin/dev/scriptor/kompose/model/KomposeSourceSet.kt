@@ -181,20 +181,19 @@ data class KomposeSourceSet(
         projectPath: String,
         projectNode: DataNode<ProjectData>,
         moduleNodes: Map<String, Map<String, DataNode<ModuleData>>>,
+        sourceSetNodes: Map<String, DataNode<ModuleData>>,
         libraryNodes: MutableMap<String, DataNode<LibraryData>>,
         ownerNode: DataNode<ModuleData>,
     ) {
         include.forEach {
-            val nodes = moduleNodes[it]
-                ?: throw ExternalSystemException("Kompose module '$id' depends on unknown module '$it'")
+            val nodes = sourceSetNodes[it]
+                ?: throw ExternalSystemException("Kompose source set '$id' depends on unknown source set '$it'")
 
-            nodes.forEach { (_, node) ->
-                addDependency(
-                    ownerNode,
-                    node,
-                    DependencyScope.COMPILE,
-                )
-            }
+            addDependency(
+                ownerNode,
+                nodes,
+                DependencyScope.COMPILE,
+            )
         }
 
         dependencies.compile.modules
