@@ -44,7 +44,6 @@ data class KomposeModule(
         val modulePath = Path(projectPath) / path
 
         val moduleFileDirectoryPath = Path(projectPath) / ".idea" / "kompose"
-        val externalConfigPath = modulePath / "module.toml"
 
         val idName = when (val data = parentNode.data) {
             is ModuleData -> "${data.internalName}.$id"
@@ -59,7 +58,7 @@ data class KomposeModule(
                 "JAVA_MODULE",
                 idName,
                 moduleFileDirectoryPath.toString(),
-                externalConfigPath.toString(),
+                modulePath.toString(),
             ).apply {
                 internalName = idName
                 externalName = name

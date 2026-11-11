@@ -44,7 +44,6 @@ data class KomposeProject(
 
         val rootModuleNode = if (modules.none { (_, v) -> v.path == "." }) {
             val moduleFileDirectoryPath = Path(projectPath) / ".idea" / "kompose"
-            val externalConfigPath = Path(projectPath) / "project.toml"
 
             val moduleNode = projectNode.createChild(
                 ProjectKeys.MODULE,
@@ -54,7 +53,7 @@ data class KomposeProject(
                     "JAVA_MODULE",
                     id,
                     moduleFileDirectoryPath.toString(),
-                    externalConfigPath.toString(),
+                    projectPath,
                 ).apply {
                     internalName = id
                     externalName = name

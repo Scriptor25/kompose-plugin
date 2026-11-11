@@ -34,7 +34,6 @@ data class KomposeSourceSet(
         val modulePath = Path(projectPath) / module.path
 
         val moduleFileDirectoryPath = Path(projectPath) / ".idea" / "kompose"
-        val externalConfigPath = modulePath / "module.toml"
 
         val source = Path(projectPath) / source
         val build = Path(projectPath) / build
@@ -55,7 +54,7 @@ data class KomposeSourceSet(
                 "JAVA_MODULE",
                 idName,
                 moduleFileDirectoryPath.toString(),
-                externalConfigPath.toString(),
+                modulePath.toString(),
             ).apply {
                 internalName = idName
                 externalName = id
