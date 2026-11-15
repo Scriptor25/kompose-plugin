@@ -16,7 +16,6 @@ import kotlin.io.path.div
 data class KomposeProject(
     val id: String,
     val path: String,
-    val name: String,
     val repositories: KomposeRepositories,
     val modules: Map<String, KomposeModule>,
 ) {
@@ -37,7 +36,7 @@ data class KomposeProject(
                 projectPath,
             ).apply {
                 internalName = id
-                externalName = name
+                externalName = id
             },
             null,
         )
@@ -56,8 +55,8 @@ data class KomposeProject(
                     projectPath,
                 ).apply {
                     internalName = id
-                    externalName = name
-                    moduleName = name
+                    externalName = id
+                    moduleName = id
 
                     setProperty(KomposeDataKey.KEY, KEY)
                 }

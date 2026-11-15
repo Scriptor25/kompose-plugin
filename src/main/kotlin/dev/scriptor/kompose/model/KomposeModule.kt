@@ -23,7 +23,6 @@ data class KomposeModuleArtifact(
 @Serializable
 data class KomposeModule(
     val id: String,
-    val name: String,
     val path: String,
     val source: String,
     val build: String,
@@ -61,8 +60,8 @@ data class KomposeModule(
                 modulePath.toString(),
             ).apply {
                 internalName = idName
-                externalName = name
-                moduleName = name
+                externalName = id
+                moduleName = id
 
                 setProperty(KomposeDataKey.KEY, KEY)
 

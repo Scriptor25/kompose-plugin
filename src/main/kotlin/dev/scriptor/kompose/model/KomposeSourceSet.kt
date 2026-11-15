@@ -314,7 +314,7 @@ fun addDependency(
         LibraryDependencyData(
             ownerNode.data,
             targetNode.data,
-            LibraryLevel.MODULE,
+            LibraryLevel.PROJECT,
         ).also {
             it.scope = scope
         }
