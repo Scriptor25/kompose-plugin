@@ -19,10 +19,6 @@ class KomposeNewProjectWizardStep(parent: NewProjectWizardStep) : AbstractNewPro
         Library,
     }
 
-    companion object {
-
-    }
-
     private val moduleTypeProperty = propertyGraph.property(ModuleType.Application)
 
     override fun setupUI(builder: Panel) {
@@ -81,10 +77,10 @@ class KomposeNewProjectWizardStep(parent: NewProjectWizardStep) : AbstractNewPro
             include = ${modules.joinToString(", ", "[", "]") { """"$it"""" }}
             
             [dependencies]
-            maven = ["org.jetbrains.kotlin:kotlin-stdlib:2.4.20"]
+            maven = ["org.jetbrains.kotlin:kotlin-stdlib:2.4.21"]
             
             [repositories]
-            maven = ["https://repo1.maven.org/maven2/"]
+            maven = ["local", "https://repo1.maven.org/maven2/"]
         """.trimIndent() + "\n"
 
         Files.writeString(root / "project.toml", content)
@@ -93,11 +89,12 @@ class KomposeNewProjectWizardStep(parent: NewProjectWizardStep) : AbstractNewPro
     private fun generateApplicationModule(root: Path, name: String) {
         val content = """
             type = "application"
+            
+            [artifact]
             name = "$name"
 
             [application]
             main = "MainKt"
-            include = ["main"]
 
             [sources.main]
         """.trimIndent() + "\n"
@@ -108,12 +105,12 @@ class KomposeNewProjectWizardStep(parent: NewProjectWizardStep) : AbstractNewPro
     private fun generateLibraryModule(root: Path, name: String) {
         val content = """
             type = "library"
+            
+            [artifact]
             name = "$name"
 
             [library]
-            package = "jar"
             sources = true
-            include = ["main"]
 
             [sources.main]
         """.trimIndent() + "\n"
