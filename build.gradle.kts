@@ -1,3 +1,5 @@
+import org.jetbrains.intellij.platform.gradle.tasks.VerifyPluginTask
+
 plugins {
     id("org.jetbrains.kotlin.jvm")
     id("org.jetbrains.kotlin.plugin.serialization")
@@ -16,5 +18,13 @@ dependencies {
         bundledPlugin("org.jetbrains.kotlin")
 
         bundledModule("intellij.platform.externalSystem")
+    }
+}
+
+intellijPlatform {
+    pluginVerification {
+        failureLevel = listOf(
+            VerifyPluginTask.FailureLevel.COMPATIBILITY_PROBLEMS
+        )
     }
 }
