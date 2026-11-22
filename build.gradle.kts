@@ -9,7 +9,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
 
     intellijPlatform {
-        intellijIdea("2026.2.3")
+        intellijIdea("2026.3")
 
         bundledPlugin("com.intellij.java")
 
