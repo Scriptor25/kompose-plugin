@@ -13,25 +13,24 @@ class KomposeTaskManager : ExternalSystemTaskManager<ExternalSystemExecutionSett
     private fun argsFor(task: KomposeTask): Array<String> =
         when (task) {
             KomposeTask.Clean ->
-                arrayOf("clean")
+                arrayOf(":clean")
 
             KomposeTask.Compile ->
-                arrayOf("compile")
+                arrayOf(":compile")
 
             KomposeTask.Launch ->
-                arrayOf("launch")
+                arrayOf(":launch")
 
             KomposeTask.Package ->
-                arrayOf("package")
+                arrayOf(":package")
 
             KomposeTask.PackageFat ->
-                arrayOf("package", "--fat")
+                arrayOf(":package", "--fat")
         }
 
-    private suspend fun executeTask(
+    private fun executeTask(
         projectPath: String,
         id: ExternalSystemTaskId,
-        settings: ExternalSystemExecutionSettings,
         listener: ExternalSystemTaskNotificationListener,
         taskName: String,
     ) {
@@ -46,7 +45,7 @@ class KomposeTaskManager : ExternalSystemTaskManager<ExternalSystemExecutionSett
             ),
         )
 
-        processBlocking(
+        process(
             "kompose",
             *argsFor(task),
             stdout = {
@@ -84,7 +83,6 @@ class KomposeTaskManager : ExternalSystemTaskManager<ExternalSystemExecutionSett
                 executeTask(
                     projectPath,
                     id,
-                    settings,
                     listener,
                     taskName,
                 )

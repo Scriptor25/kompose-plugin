@@ -51,7 +51,7 @@ class KomposeProjectOpenProcessor : ProjectOpenProcessor() {
             ImportSpecBuilder(
                 project,
                 KomposeSystemId,
-            ).build(),
+            ),
         )
 
         return project

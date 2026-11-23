@@ -2,11 +2,13 @@ package dev.scriptor.kompose
 
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.components.service
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ExternalSystemException
 import com.intellij.openapi.externalSystem.model.Key
 import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.externalSystem.model.project.ProjectData
+import com.intellij.openapi.externalSystem.service.project.IdeModelsProvider
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider
 import com.intellij.openapi.externalSystem.service.project.manage.AbstractProjectDataService
 import com.intellij.openapi.project.Project
@@ -38,5 +40,17 @@ class KomposeProjectDataService : AbstractProjectDataService<ProjectData, Projec
                 WriteAction.run<ExternalSystemException> { projectManager.projectSdk = javaSdk }
             }
         }
+    }
+
+    override fun onSuccessImport(
+        imported: Collection<DataNode<ProjectData?>?>,
+        projectData: ProjectData?,
+        project: Project,
+        modelsProvider: IdeModelsProvider,
+    ) {
+        if (projectData?.owner != KomposeSystemId)
+            return
+
+        project.service<KomposeProjectService>().resolve()
     }
 }
