@@ -13,19 +13,19 @@ class KomposeTaskManager : ExternalSystemTaskManager<ExternalSystemExecutionSett
     private fun argsFor(task: KomposeTask): Array<String> =
         when (task) {
             KomposeTask.Clean ->
-                arrayOf("clean")
+                arrayOf(":clean")
 
             KomposeTask.Compile ->
-                arrayOf("compile")
+                arrayOf(":compile")
 
             KomposeTask.Launch ->
-                arrayOf("launch")
+                arrayOf(":launch")
 
             KomposeTask.Package ->
-                arrayOf("package")
+                arrayOf(":package")
 
             KomposeTask.PackageFat ->
-                arrayOf("package", "--fat")
+                arrayOf(":package", "--fat")
         }
 
     private fun executeTask(

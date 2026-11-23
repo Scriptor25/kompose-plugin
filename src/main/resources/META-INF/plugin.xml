@@ -31,10 +31,9 @@
 
         <configurationType implementation="dev.scriptor.kompose.KomposeRunConfigurationType"/>
 
-        <externalSystem.facetConfigurationImporter
-                implementation="dev.scriptor.kompose.KomposeFacetConfigurationImporter"/>
-
         <newProjectWizard.generator implementation="dev.scriptor.kompose.KomposeNewProjectWizard"/>
+
+        <postStartupActivity implementation="dev.scriptor.kompose.activity.KomposeProjectOpenActivity"/>
     </extensions>
 
     <actions>
