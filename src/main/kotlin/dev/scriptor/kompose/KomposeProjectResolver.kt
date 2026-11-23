@@ -39,18 +39,18 @@ class KomposeProjectResolver : ExternalSystemProjectResolver<ExternalSystemExecu
     }
 
     private fun load(projectPath: String): KomposeProject {
-        val result = processBlocking(
-            "kompose", "model", "resolve",
+        val model = process(
+            "kompose", "model",
             workingDirectory = projectPath,
         )
 
-        if (result.exitCode != 0)
-            throw ExternalSystemException("'kompose' failed with exit code ${result.exitCode}:\n${result.stderrString}")
+        if (model.exitCode != 0)
+            throw ExternalSystemException("'kompose model' failed with exit code ${model.exitCode}:\n${model.stderrString}")
 
         val json = Json {
             ignoreUnknownKeys = true
         }
 
-        return json.decodeFromString(result.stdoutString)
+        return json.decodeFromString(model.stdoutString)
     }
 }

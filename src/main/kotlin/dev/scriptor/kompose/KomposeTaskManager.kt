@@ -28,10 +28,9 @@ class KomposeTaskManager : ExternalSystemTaskManager<ExternalSystemExecutionSett
                 arrayOf("package", "--fat")
         }
 
-    private suspend fun executeTask(
+    private fun executeTask(
         projectPath: String,
         id: ExternalSystemTaskId,
-        settings: ExternalSystemExecutionSettings,
         listener: ExternalSystemTaskNotificationListener,
         taskName: String,
     ) {
@@ -46,7 +45,7 @@ class KomposeTaskManager : ExternalSystemTaskManager<ExternalSystemExecutionSett
             ),
         )
 
-        processBlocking(
+        process(
             "kompose",
             *argsFor(task),
             stdout = {
@@ -84,7 +83,6 @@ class KomposeTaskManager : ExternalSystemTaskManager<ExternalSystemExecutionSett
                 executeTask(
                     projectPath,
                     id,
-                    settings,
                     listener,
                     taskName,
                 )
