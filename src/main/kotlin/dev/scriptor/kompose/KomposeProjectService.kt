@@ -27,9 +27,8 @@ class KomposeProjectService(
                             stdout = { line ->
                                 val (fst, snd) = line.split("/", limit = 2).map { it.trim().toInt() }
 
-                                reporter.text("Resolving Kompose Dependencies")
                                 reporter.fraction(fst.toDouble() / snd.toDouble())
-                                reporter.details("$fst / $snd")
+                                reporter.text("$fst / $snd")
                             },
                             workingDirectory = project.basePath!!,
                         )
