@@ -2,7 +2,6 @@ package dev.scriptor.kompose
 
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.externalSystem.model.ExternalSystemException
-import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataImportListener
 import com.intellij.openapi.project.Project
 import com.intellij.platform.eel.provider.utils.stderrString
 import com.intellij.platform.ide.progress.withBackgroundProgress
@@ -23,7 +22,7 @@ class KomposeProjectService(
                 withContext(Dispatchers.IO) {
                     reportRawProgress { reporter ->
                         val result = process(
-                            "kompose", ":resolve",
+                            "kompose", ":resolve", "--progress",
                             stdout = { line ->
                                 val (fst, snd) = line.split("/", limit = 2).map { it.trim().toInt() }
 
